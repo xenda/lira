@@ -34,6 +34,27 @@ class Lira
     make_request_and_parse_response(params)
   end
 
+  def add_members_to_mailing_list(id, options)
+    params = {}
+    params[:type] = "record"
+    params[:activity] = "upload"
+
+    self.xml = Builder::XmlMarkup.new(:indent => 0)
+
+    input = self.xml.DATASET{ |ds|
+      ds.SITE_ID(self.site_id)
+      ds.MLID(id)
+      ds.DATA(options[:email], {:type => "email"})
+      ds.DATA(options[:file], {:id => "file", :type => "extra"})
+      ds.DATA(options[:type] || "active", {:id => "type", :type => "extra"})
+    }.sub("\n","")
+
+    params[:input] = input
+
+    make_request_and_parse_response(params)
+
+  end
+
   def destroy_mailing_list(id)
     params = {}
     params[:type] = "list"
@@ -87,6 +108,29 @@ class Lira
       ds.DATA(options[:from][:name], {:type => "from-name"})
       ds.DATA(options[:message][:format], {:type => "message-format"})
       ds.DATA(content, {:type => "message-#{options[:message][:format].downcase}"})
+    }.sub("\n","")
+
+    params[:input] = input
+    
+    make_request_and_parse_response(params)
+  end
+
+  def deliver_message(options)
+    params = {}
+    params[:type] = "message"
+    params[:activity] = "schedule"
+
+    self.xml = Builder::XmlMarkup.new(:indent => 0)
+
+    input = self.xml.DATASET{ |ds|
+      ds.SITE_ID(self.site_id)
+      ds.MLID(options[:mailing_list_id])
+      ds.DATA(self.password, {:type => "extra", :id => "password"})
+      ds.MID(options[:message_id])
+      if options[:segment_id]
+        ds.MID(options[:segment_id], {:type => "rule"})
+      end
+      ds.DATA("schedule", {:type => "action"})
     }.sub("\n","")
 
     params[:input] = input
