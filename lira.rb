@@ -108,6 +108,8 @@ class Lira
       ds.DATA(options[:from][:name], {:type => "from-name"})
       ds.DATA(options[:message][:format], {:type => "message-format"})
       ds.DATA(content, {:type => "message-#{options[:message][:format].downcase}"})
+      ds.DATA("on", {:type => "clickthru"})
+      ds.DATA("on", {:type => "clickthru-text"})
     }.sub("\n","")
 
     params[:input] = input
