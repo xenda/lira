@@ -2,6 +2,7 @@ require 'builder'
 require 'nori'
 require 'cgi'
 require 'httpclient'
+require './xml_parser'
 
 class Lira
   URL = "https://www.elabs12.com/API/mailing_list.html"
@@ -138,6 +139,27 @@ class Lira
     params[:input] = input
     
     make_request_and_parse_response(params)
+  end
+
+  def query_deliveries(options)
+    params = {}
+    params[:type] = "message"
+    params[:activity] = "query-stats"
+
+    self.xml = Builder::XmlMarkup.new(:indent => 0)
+
+    input = self.xml.DATASET{ |ds|
+      ds.SITE_ID(self.site_id)
+      ds.MLID(options[:mailing_list_id])
+      ds.DATA(self.password, {:type => "extra", :id => "password"})
+      ds.MID(options[:message_id])
+    }.sub("\n","")
+
+    params[:input] = input
+    
+    response = self.make_request(:post, Lira::URL, params)
+    parser = XMLParser.new(response.body)
+    parser.parse
   end
 
   protected

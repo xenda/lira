@@ -24,6 +24,11 @@ deliver_status = lira.deliver_message({
   :message_id => message["DATASET"]["DATA"]
 })
 
+deliveries_stats = lira.query_deliveries({
+  :mailing_list_id => "433",
+  :message_id => "15181"
+})
+
 # message = lira.create_message({
 #   :subject => "Mensaje de Prueba",
 #   :mailing_list_id => "418",
