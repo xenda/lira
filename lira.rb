@@ -35,7 +35,34 @@ class Lira
     make_request_and_parse_response(params)
   end
 
-  def add_members_to_mailing_list(id, options)
+  def add_member_to_mailing_list(id, options)
+    params = {}
+    params[:type] = "record"
+    params[:activity] = "add"
+
+    attributes = options[:attributes] || {}
+
+    self.xml = Builder::XmlMarkup.new(:indent => 0)
+
+    input = self.xml.DATASET{ |ds|
+      ds.SITE_ID(self.site_id)
+      ds.MLID(id)
+      ds.DATA(self.password, {:type => "extra", :id => "password"})
+      ds.DATA(options[:email], {:type => "email"})
+      ds.DATA(options[:type] || "active", {:id => "state", :type => "extra"})
+
+      attributes.each do |key, value|
+        ds.DATA(value, {:type => "demographic", :id => key.to_s})
+      end
+
+    }.sub("\n","")
+
+    params[:input] = input
+
+    make_request_and_parse_response(params)
+  end
+
+  def upload_members_to_mailing_list(id, options)
     params = {}
     params[:type] = "record"
     params[:activity] = "upload"
@@ -45,6 +72,7 @@ class Lira
     input = self.xml.DATASET{ |ds|
       ds.SITE_ID(self.site_id)
       ds.MLID(id)
+      ds.DATA(self.password, {:type => "extra", :id => "password"})
       ds.DATA(options[:email], {:type => "email"})
       ds.DATA(options[:file], {:id => "file", :type => "extra"})
       ds.DATA(options[:type] || "active", {:id => "type", :type => "extra"})

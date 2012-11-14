@@ -29,6 +29,11 @@ deliveries_stats = lira.query_deliveries({
   :message_id => "15181"
 })
 
+member = lira.add_member_to_mailing_list(418, {
+  :email => "srsanchez@xenda.pe",
+  :attributes => {:'1' => "XendoBot", :'2' => "Sanchez"}
+})
+
 # message = lira.create_message({
 #   :subject => "Mensaje de Prueba",
 #   :mailing_list_id => "418",
