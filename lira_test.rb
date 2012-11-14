@@ -34,6 +34,11 @@ member = lira.add_member_to_mailing_list(418, {
   :attributes => {:'1' => "XendoBot", :'2' => "Sanchez"}
 })
 
+members = lira.upload_members_to_mailing_list(418, {
+  :notificate_to => "gustavo@xenda.pe",
+  :file => "https://raw.github.com/xenda/lira/master/new_members_418.csv"
+})
+
 # message = lira.create_message({
 #   :subject => "Mensaje de Prueba",
 #   :mailing_list_id => "418",

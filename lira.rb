@@ -73,7 +73,7 @@ class Lira
       ds.SITE_ID(self.site_id)
       ds.MLID(id)
       ds.DATA(self.password, {:type => "extra", :id => "password"})
-      ds.DATA(options[:email], {:type => "email"})
+      ds.DATA(options[:notificate_to], {:type => "email"})
       ds.DATA(options[:file], {:id => "file", :type => "extra"})
       ds.DATA(options[:type] || "active", {:id => "type", :type => "extra"})
     }.sub("\n","")
